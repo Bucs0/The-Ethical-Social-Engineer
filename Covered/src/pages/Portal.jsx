@@ -23,7 +23,9 @@ export default function Portal() {
   const [showTriggers, setShowTriggers] = useState(false)
 
   function handleChange(e) {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    const { name, value } = e.target
+    if (name === 'pin' && value.length > 12) return
+    setForm(prev => ({ ...prev, [name]: value }))
   }
 
   async function handleSubmit(e) {
@@ -197,7 +199,7 @@ export default function Portal() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">Create Access PIN</label>
                 <input
                   type="password" name="pin" value={form.pin} onChange={handleChange}
-                  placeholder="Enter a 4–6 digit PIN" autoComplete="off" maxLength={6} inputMode="numeric"
+                  placeholder="Enter a 6–12 digit PIN" autoComplete="off"
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-gray-50 outline-none focus:border-[#0057b8] focus:bg-white transition placeholder-gray-400"
                 />
                 <p className="text-[11px] text-gray-400 mt-1.5">
