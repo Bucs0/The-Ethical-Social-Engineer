@@ -88,8 +88,8 @@ export default function Admin() {
     await supabase.from('entries').delete().neq('id', 0)
     setEntries([])
     setConfirmAll(false)
-    addLog(`All ${count} entries deleted from database — decommissioned.`)
-    addLog(`Data decommissioning complete. No victim data remains.`)
+    addLog(`All ${count} entries permanently deleted from database.`)
+    addLog(`Decommissioning complete. No participant data remains in storage.`)
   }
 
   function exportJSON() {
@@ -107,7 +107,6 @@ export default function Admin() {
     setLog(prev => [`[${time}] ${msg}`, ...prev])
   }
 
-  // ── LOGIN GATE ──
   if (!authed) {
     return (
       <div className="min-h-screen bg-[#0d0f14] flex items-center justify-center px-4">
@@ -126,7 +125,6 @@ export default function Admin() {
               AUTHENTICATE
             </button>
           </form>
-          <p className="text-[#2a3349] text-[10px] mt-4 font-mono">Default: itec85admin</p>
         </div>
       </div>
     )
@@ -138,7 +136,6 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-[#0d0f14] text-slate-200">
 
-      {/* SIDEBAR */}
       <aside className="hidden lg:flex fixed left-0 top-0 h-full w-56 bg-[#161b24] border-r border-[#2a3349] flex-col">
         <div className="px-5 pt-6 pb-5 border-b border-[#2a3349]">
           <p className="text-[#00e5ff] font-mono font-bold text-xs tracking-widest">// ADMIN PANEL</p>
@@ -166,7 +163,6 @@ export default function Admin() {
         </div>
       </aside>
 
-      {/* MOBILE TOP NAV */}
       <div className="lg:hidden bg-[#161b24] border-b border-[#2a3349] px-4 py-3 flex items-center justify-between">
         <p className="text-[#00e5ff] font-mono font-bold text-xs tracking-widest">// ADMIN PANEL</p>
         <div className="flex gap-2">
@@ -178,13 +174,12 @@ export default function Admin() {
 
       <main className="lg:ml-56 p-4 sm:p-6 lg:p-8">
 
-        {/* ── ENTRIES TAB ── */}
         {tab === 'entries' && (
           <>
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
               <div>
                 <h1 className="text-xl font-bold">Captured <span className="text-[#00e5ff]">Entries</span></h1>
-                <p className="text-slate-500 text-xs mt-0.5">Live data from Supabase — visible from any device</p>
+                <p className="text-slate-500 text-xs mt-0.5">Submissions from all devices</p>
               </div>
               <div className="flex gap-2">
                 <button onClick={exportJSON} disabled={entries.length === 0}
@@ -198,7 +193,6 @@ export default function Admin() {
               </div>
             </div>
 
-            {/* STATS */}
             <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
               {[
                 { val: entries.length, label: 'Total Captured', color: 'text-[#00e5ff]' },
@@ -212,7 +206,6 @@ export default function Admin() {
               ))}
             </div>
 
-            {/* TABLE */}
             <div className="bg-[#161b24] border border-[#2a3349] rounded-xl overflow-hidden mb-8">
               <div className="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-[#2a3349]">
                 <h3 className="text-sm font-semibold">Victim Log</h3>
@@ -232,7 +225,7 @@ export default function Admin() {
               ) : entries.length === 0 ? (
                 <div className="py-16 text-center">
                   <p className="text-4xl mb-3">📭</p>
-                  <p className="text-slate-500 text-sm">No entries yet. Waiting for victims...</p>
+                  <p className="text-slate-500 text-sm">No entries yet.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -274,47 +267,37 @@ export default function Admin() {
               )}
             </div>
 
-            {/* DECOMMISSION */}
             <div id="decomm" className="bg-[#161b24] border border-[#2a3349] rounded-xl p-5 sm:p-6">
               <h3 className="text-red-400 font-bold text-base mb-1">Phase IV — Data Decommissioning</h3>
               <p className="text-slate-500 text-sm mb-5 leading-relaxed">
-                All mock data collected must be securely destroyed after the experiment per ITEC 85 Activity #2 requirements.
+                All participant data is permanently deleted from the database once the experiment concludes.
               </p>
-              <div className="flex flex-wrap gap-3 mb-5">
-                {[['1','Review all captured entries above'],['2','Export JSON as report evidence (optional)'],['3','Click "Wipe All Data" to permanently delete from Supabase'],['4','Screenshot the log below as decommission proof']].map(([num, text]) => (
-                  <div key={num} className="flex items-center gap-2 bg-[#1e2638] border border-[#2a3349] rounded-lg px-3 py-2.5 text-xs text-slate-400">
-                    <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">{num}</span>
-                    {text}
-                  </div>
-                ))}
-              </div>
               <div className="flex flex-wrap gap-3 mb-5">
                 <button onClick={() => setConfirmAll(true)} disabled={entries.length === 0}
                   className="px-4 py-2.5 bg-red-500 text-white text-sm font-bold rounded-lg hover:bg-red-600 disabled:opacity-30 transition">
                   Wipe All Data
                 </button>
-                <button onClick={() => addLog(`Manual entry — decommissioning initiated by admin at ${new Date().toLocaleTimeString('en-PH')}`)}
+                <button onClick={() => addLog(`Manual log entry added by admin`)}
                   className="px-4 py-2.5 border border-[#2a3349] text-slate-400 text-sm font-semibold rounded-lg hover:border-[#00e5ff] hover:text-[#00e5ff] transition">
                   + Add Log Entry
                 </button>
               </div>
               <div className="bg-[#0d0f14] border border-[#2a3349] rounded-lg p-4 font-mono text-xs text-green-400 min-h-[100px] leading-7">
                 {log.length === 0
-                  ? <span className="text-slate-600">// Decommission log will appear here...</span>
+                  ? <span className="text-slate-700">Awaiting actions...</span>
                   : log.map((l, i) => <div key={i}>{l}</div>)
                 }
               </div>
-              <p className="text-slate-600 text-[10px] mt-2">Screenshot this log and include it in Section D — Decommission Log of your report.</p>
+              <p className="text-slate-600 text-[10px] mt-2">Include a screenshot of this log in Section D of your report.</p>
             </div>
           </>
         )}
 
-        {/* ── BLUEPRINT TAB ── */}
         {tab === 'blueprint' && (
           <>
             <div className="mb-7">
               <h1 className="text-xl font-bold">Attack <span className="text-[#00e5ff]">Blueprint</span></h1>
-              <p className="text-slate-500 text-xs mt-0.5">Section A — Detailed attack lifecycle · For your ITEC 85 report</p>
+              <p className="text-slate-500 text-xs mt-0.5">Attack lifecycle documentation</p>
             </div>
 
             <div className="bg-[#161b24] border border-[#2a3349] rounded-xl p-5 mb-6">
@@ -361,7 +344,7 @@ export default function Admin() {
 
             <div className="bg-[#161b24] border border-[#2a3349] rounded-xl overflow-hidden mb-6">
               <div className="px-5 py-3.5 border-b border-[#2a3349]">
-                <h3 className="text-sm font-semibold">Psychological Triggers — Section B</h3>
+                <h3 className="text-sm font-semibold">Psychological Triggers</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[500px]">
@@ -384,18 +367,10 @@ export default function Admin() {
                 </table>
               </div>
             </div>
-
-            <div className="bg-[#00e5ff]/5 border border-[#00e5ff]/20 rounded-xl p-4">
-              <p className="text-[#00e5ff] text-xs font-bold mb-1">Report Writing Tip</p>
-              <p className="text-slate-400 text-xs leading-relaxed">
-                Screenshot this Blueprint tab for <strong className="text-slate-300">Section A</strong> and the Triggers table for <strong className="text-slate-300">Section B</strong> of your Social Engineering Audit Report.
-              </p>
-            </div>
           </>
         )}
       </main>
 
-      {/* CONFIRM MODAL */}
       {confirmAll && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-4">
           <div className="bg-[#161b24] border border-red-500/40 rounded-2xl p-6 w-full max-w-sm text-center">
